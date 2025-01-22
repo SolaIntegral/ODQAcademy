@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>クイズサイト - ログイン</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>ログイン</h1>
+    <div class="form-group">
+      <label for="email">メールアドレス</label>
+      <input type="email" id="email" placeholder="example@mail.com" />
+    </div>
+    <button id="loginBtn">ログイン</button>
+    <p>アカウントをお持ちでない方は <a href="register.html">こちら</a></p>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    const loginBtn = document.getElementById('loginBtn');
+    loginBtn.addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim();
+      if(!email) {
+        alert('メールアドレスを入力してください');
+        return;
+      }
+
+      try {
+        const result = await apiLogin(email);
+        if(result.status === 'success') {
+          // ログイン成功: ユーザー情報を localStorage に保存
+          localStorage.setItem('user', JSON.stringify(result.user));
+          window.location.href = 'quiz.html';
+        } else {
+          alert(result.message || 'ログインに失敗しました');
+        }
+      } catch(e) {
+        alert('エラーが発生しました: ' + e);
+      }
+    });
+  </script>
+</body>
+</html>

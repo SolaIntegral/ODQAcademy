@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>クイズサイト - クイズ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container" id="quizContainer">
+    <h1>クイズに挑戦！</h1>
+    <div id="questionArea"></div>
+    <div id="choicesArea"></div>
+  </div>
+
+  <div class="container" id="resultContainer" style="display:none;">
+    <h1>結果</h1>
+    <p id="scoreText"></p>
+    <p id="accuracyText"></p>
+    <div id="answerList"></div>
+    <button id="retryBtn">もう一度</button>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    let quizList = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let user = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // ログインチェック
+      const userData = localStorage.getItem('user');
+      if(!userData) {
+        alert('ログインしてください');
+        window.location.href = 'login.html';
+        return;
+      }
+      user = JSON.parse(userData);
+
+      // クイズ取得
+      const result = await apiFetchQuiz();
+      if(result.status === 'success') {
+        quizList = result.quizList;
+        currentIndex = 0;
+        correctCount = 0;
+        showQuestion();
+      } else {
+        alert('クイズ取得に失敗しました');
+      }
+    });
+
+    function showQuestion() {
+      document.getElementById('resultContainer').style.display = 'none';
+      document.getElementById('quizContainer').style.display = 'block';
+
+      if(currentIndex >= quizList.length) {
+        return;
+      }
+      const questionObj = quizList[currentIndex];
+      const questionArea = document.getElementById('questionArea');
+      const choicesArea = document.getElementById('choicesArea');
+
+      questionArea.innerHTML = `<h2>Q${currentIndex+1}. ${questionObj.question}</h2>`;
+      choicesArea.innerHTML = '';
+      choicesArea.className = 'choices-grid';
+
+      // 選択肢をランダムに並び替え
+      const shuffledChoices = shuffleArray([...questionObj.choices]);
+
+      shuffledChoices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.textContent = choice;
+        btn.className = 'choiceBtn';
+        btn.addEventListener('click', () => {
+          // 簡易的に「choices[0]が正解」という仮定
+          if(choice === questionObj.choices[0]) {
+            correctCount++;
+          }
+          currentIndex++;
+          if(currentIndex < quizList.length) {
+            showQuestion();
+          } else {
+            // 終了
+            showResult();
+          }
+        });
+        choicesArea.appendChild(btn);
+      });
+    }
+
+    function showResult() {
+      document.getElementById('quizContainer').style.display = 'none';
+      document.getElementById('resultContainer').style.display = 'block';
+
+      const score = correctCount;
+      const total = quizList.length;
+      const percent = (score / total) * 100;
+
+      document.getElementById('scoreText').textContent = `あなたの得点: ${score} / ${total}`;
+      document.getElementById('accuracyText').textContent = `正答率: ${percent.toFixed(1)}%`;
+
+      // 問題と正解一覧
+      const answerList = document.getElementById('answerList');
+      answerList.innerHTML = '';
+      quizList.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = 'answer-item';
+        div.innerHTML = `<p>Q${i+1}: ${q.question}<br/>正解: ${q.choices[0]}</p>`;
+        answerList.appendChild(div);
+      });
+
+      // スプレッドシートに正答率を更新
+      updateUserScore(score, total);
+
+      const retryBtn = document.getElementById('retryBtn');
+      retryBtn.addEventListener('click', () => {
+        window.location.reload();
+      });
+    }
+
+    async function updateUserScore(score, total) {
+      try {
+        // user の accuracy, rowID などを使う
+        const result = await apiUpdateScore(
+          user.rowID,
+          user.accuracy,  // 現在の精度(ログイン時に取得した数値)
+          score,
+          total
+        );
+        if(result.status === 'success') {
+          // 新しい正答率を保存
+          user.accuracy = result.newAccuracy;
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+  </script>
+</body>
+</html>
