@@ -2,149 +2,338 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>クイズサイト - クイズ</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>クイズサイト</title>
+  <style>
+    /* リセット */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+    body {
+    font-family: sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0 auto;
+    overflow-x: hidden;
+    }
+
+    .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+
+    .site-title {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.4rem;
+    }
+
+    #quiz-container {
+    width: 100%;
+    }
+
+    /* 問題文 */
+    .question-area {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    }
+
+    /* 選択肢2×2配置 */
+    .choices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    margin-bottom: 40px;
+    }
+
+    /* 選択肢ボタン */
+    .choice-btn {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    }
+    .choice-btn:hover {
+    background-color: #f0f0f0;
+    }
+
+    /* 結果表示 */
+    #result-container {
+    text-align: center;
+    margin-top: 20px;
+    }
+    .hidden {
+    display: none;
+    }
+    #score-text {
+    font-size: 1.2rem;
+    margin: 20px 0;
+    }
+    #answer-list {
+    text-align: left;
+    margin: 20px auto;
+    list-style-type: decimal;
+    max-width: 90%;
+    }
+    #restart-btn {
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1rem;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    }
+    #restart-btn:hover {
+    background-color: #0056b3;
+    }
+
+    /* エフェクト表示コンテナ（画面全体に配置） */
+    #effect-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* クリックを透過させる */
+    z-index: 999;        /* 最前面表示 */
+    }
+
+    /* 正解(○)、不正解(×)のスタイル共通 */
+    #correct-effect,
+    #incorrect-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 8rem; /* 大きめに設定 */
+    transform: translate(-50%, -50%);
+    opacity: 0.5; /* 半透明 */
+    display: none; /* 初期は非表示 */
+    user-select: none; /* 選択不可 */
+    }
+
+    /* 赤色の○ */
+    #correct-effect {
+    color: red;
+    }
+
+    /* 青色の× */
+    #incorrect-effect {
+    color: blue;
+    }
+
+  </style>
 </head>
 <body>
-  <div class="container" id="quizContainer">
-    <h1>クイズに挑戦！</h1>
-    <div id="questionArea"></div>
-    <div id="choicesArea"></div>
+  <div class="container">
+    <h1 class="site-title">クイズに挑戦！</h1>
+    
+    <!-- クイズ表示領域 -->
+    <div id="quiz-container">
+      <div id="question" class="question-area"></div>
+      <div id="choices" class="choices-grid"></div>
+    </div>
+
+    <!-- 結果表示領域 -->
+    <div id="result-container" class="hidden">
+      <h2>結果発表</h2>
+      <p id="score-text"></p>
+      <ul id="answer-list"></ul>
+      <button id="restart-btn">もう一度挑戦</button>
+      <button id="map-btn">マップに戻る</button>
+
+    </div>
   </div>
 
-  <div class="container" id="resultContainer" style="display:none;">
-    <h1>結果</h1>
-    <p id="scoreText"></p>
-    <p id="accuracyText"></p>
-    <div id="answerList"></div>
-    <button id="retryBtn">もう一度</button>
+  <!-- 正解・不正解のエフェクト表示領域 -->
+  <div id="effect-container">
+    <div id="correct-effect">○</div>
+    <div id="incorrect-effect">×</div>
   </div>
 
-  <script src="main.js"></script>
+
+  
   <script>
-    let quizList = [];
-    let currentIndex = 0;
-    let correctCount = 0;
-    let user = null;
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      // ログインチェック
-      const userData = localStorage.getItem('user');
-      if(!userData) {
-        alert('ログインしてください');
-        window.location.href = 'login.html';
-        return;
-      }
-      user = JSON.parse(userData);
-
-      // クイズ取得
-      const result = await apiFetchQuiz();
-      if(result.status === 'success') {
-        quizList = result.quizList;
-        currentIndex = 0;
-        correctCount = 0;
-        showQuestion();
-      } else {
-        alert('クイズ取得に失敗しました');
-      }
-    });
-
-    function showQuestion() {
-      document.getElementById('resultContainer').style.display = 'none';
-      document.getElementById('quizContainer').style.display = 'block';
-
-      if(currentIndex >= quizList.length) {
-        return;
-      }
-      const questionObj = quizList[currentIndex];
-      const questionArea = document.getElementById('questionArea');
-      const choicesArea = document.getElementById('choicesArea');
-
-      questionArea.innerHTML = `<h2>Q${currentIndex+1}. ${questionObj.question}</h2>`;
-      choicesArea.innerHTML = '';
-      choicesArea.className = 'choices-grid';
-
-      // 選択肢をランダムに並び替え
-      const shuffledChoices = shuffleArray([...questionObj.choices]);
-
-      shuffledChoices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.textContent = choice;
-        btn.className = 'choiceBtn';
-        btn.addEventListener('click', () => {
-          // 簡易的に「choices[0]が正解」という仮定
-          if(choice === questionObj.choices[0]) {
-            correctCount++;
-          }
-          currentIndex++;
-          if(currentIndex < quizList.length) {
-            showQuestion();
-          } else {
-            // 終了
-            showResult();
-          }
-        });
-        choicesArea.appendChild(btn);
-      });
+    /**************************************************
+     * クイズデータ
+     **************************************************/
+    const quizData = [
+    {
+        question: "日本の首都はどこ？",
+        choices: ["大阪", "東京", "京都", "名古屋"],
+        correctIndex: 1
+    },
+    {
+        question: "イギリスの首都はどこ？",
+        choices: ["リバプール", "ロンドン", "パリ", "バーミンガム"],
+        correctIndex: 1
+    },
+    {
+        question: "富士山の標高はおよそ何メートル？",
+        choices: ["2776m", "3467m", "3776m", "4776m"],
+        correctIndex: 2
+    },
+    {
+        question: "「Apple」を日本語に訳すと？",
+        choices: ["りんご", "バナナ", "ぶどう", "メロン"],
+        correctIndex: 0
+    },
+    {
+        question: "地球が自転するのにかかる時間は約何時間？",
+        choices: ["12時間", "18時間", "24時間", "36時間"],
+        correctIndex: 2
+    },
+    {
+        question: "太陽系で一番大きい惑星はどれ？",
+        choices: ["木星", "土星", "火星", "海王星"],
+        correctIndex: 0
+    },
+    {
+        question: "世界で最も人口が多い国は？（2023時点）",
+        choices: ["中国", "インド", "アメリカ", "インドネシア"],
+        correctIndex: 1
+    },
+    {
+        question: "1光年は何km？（約）",
+        choices: ["9.46兆km", "9.46億km", "9.46万km", "9.46億光年"],
+        correctIndex: 0
+    },
+    {
+        question: "酸素の化学式は？",
+        choices: ["O", "O2", "CO2", "O3"],
+        correctIndex: 1
+    },
+    {
+        question: "日本で一番面積の大きい都道府県は？",
+        choices: ["北海道", "岩手県", "福島県", "長野県"],
+        correctIndex: 0
     }
+    ];
 
-    function showResult() {
-      document.getElementById('quizContainer').style.display = 'none';
-      document.getElementById('resultContainer').style.display = 'block';
+    // 出題数
+    const TOTAL_QUESTIONS = 5;
 
-      const score = correctCount;
-      const total = quizList.length;
-      const percent = (score / total) * 100;
+const quizContainer = document.getElementById("quiz-container");
+const questionElement = document.getElementById("question");
+const choicesContainer = document.getElementById("choices");
+const resultContainer = document.getElementById("result-container");
+const scoreText = document.getElementById("score-text");
+const answerList = document.getElementById("answer-list");
+const restartBtn = document.getElementById("restart-btn");
+const correctEffect = document.getElementById("correct-effect");
+const incorrectEffect = document.getElementById("incorrect-effect");
+const mapBtn = document.getElementById("map-btn");
 
-      document.getElementById('scoreText').textContent = `あなたの得点: ${score} / ${total}`;
-      document.getElementById('accuracyText').textContent = `正答率: ${percent.toFixed(1)}%`;
+let currentQuestionIndex = 0;
+let score = 0;
+let selectedQuizData = [];
+let userAnswers = [];
 
-      // 問題と正解一覧
-      const answerList = document.getElementById('answerList');
-      answerList.innerHTML = '';
-      quizList.forEach((q, i) => {
-        const div = document.createElement('div');
-        div.className = 'answer-item';
-        div.innerHTML = `<p>Q${i+1}: ${q.question}<br/>正解: ${q.choices[0]}</p>`;
-        answerList.appendChild(div);
-      });
+function startQuiz() {
+  resultContainer.classList.add("hidden");
+  quizContainer.classList.remove("hidden");
 
-      // スプレッドシートに正答率を更新
-      updateUserScore(score, total);
+  currentQuestionIndex = 0;
+  score = 0;
+  userAnswers = [];
+  selectedQuizData = getRandomQuestions(quizData, TOTAL_QUESTIONS);
 
-      const retryBtn = document.getElementById('retryBtn');
-      retryBtn.addEventListener('click', () => {
-        window.location.reload();
-      });
-    }
+  if (!selectedQuizData.length) {
+    console.error("クイズデータが正しく読み込まれていません。");
+    return;
+  }
 
-    async function updateUserScore(score, total) {
-      try {
-        // user の accuracy, rowID などを使う
-        const result = await apiUpdateScore(
-          user.rowID,
-          user.accuracy,  // 現在の精度(ログイン時に取得した数値)
-          score,
-          total
-        );
-        if(result.status === 'success') {
-          // 新しい正答率を保存
-          user.accuracy = result.newAccuracy;
-          localStorage.setItem('user', JSON.stringify(user));
-        }
-      } catch(e) {
-        console.error(e);
-      }
-    }
+  showQuestion();
+}
 
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-  </script>
+function getRandomQuestions(data, num) {
+  return [...data].sort(() => 0.5 - Math.random()).slice(0, num);
+}
+
+function showQuestion() {
+  const currentQuiz = selectedQuizData[currentQuestionIndex];
+  if (!currentQuiz) return;
+
+  questionElement.textContent = `Q${currentQuestionIndex + 1}. ${currentQuiz.question}`;
+  const choices = shuffleArray(currentQuiz.choices.map((choice, index) => ({ text: choice, index })));
+
+  choicesContainer.innerHTML = "";
+  choices.forEach(choiceObj => {
+    const button = document.createElement("button");
+    button.classList.add("choice-btn");
+    button.textContent = choiceObj.text;
+    button.addEventListener("click", () => handleAnswer(choiceObj.index));
+    choicesContainer.appendChild(button);
+  });
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [array[i], array[randomIndex]] = [array[randomIndex], array[i]];
+  }
+  return array;
+}
+
+function handleAnswer(selectedIndex) {
+  const currentQuiz = selectedQuizData[currentQuestionIndex];
+  if (!currentQuiz) return;
+
+  const isCorrect = selectedIndex === currentQuiz.correctIndex;
+  showEffect(isCorrect);
+
+  if (isCorrect) score++;
+  userAnswers.push({ question: currentQuiz.question, choices: currentQuiz.choices, correctIndex: currentQuiz.correctIndex, selectedIndex });
+
+  currentQuestionIndex++;
+  if (currentQuestionIndex < TOTAL_QUESTIONS) {
+    setTimeout(showQuestion, 500);
+  } else {
+    setTimeout(showResult, 500);
+  }
+}
+
+function showEffect(isCorrect) {
+  const effect = isCorrect ? correctEffect : incorrectEffect;
+  effect.style.display = "block";
+  setTimeout(() => { effect.style.display = "none"; }, 500);
+}
+
+function showResult() {
+  quizContainer.classList.add("hidden");
+  resultContainer.classList.remove("hidden");
+
+  scoreText.textContent = `あなたの正解率は ${Math.round((score / TOTAL_QUESTIONS) * 100)}% (${score}/${TOTAL_QUESTIONS})`;
+  answerList.innerHTML = userAnswers.map((ans, i) => `
+    <li>
+      <strong>Q${i + 1}:</strong> ${ans.question}<br />
+      <strong>あなたの回答:</strong> ${ans.choices[ans.selectedIndex]}<br />
+      <strong>正解:</strong> ${ans.choices[ans.correctIndex]}
+    </li>
+  `).join("");
+}
+
+restartBtn.addEventListener("click", startQuiz);
+
+
+mapBtn.addEventListener("click", () => {
+  window.location.href = "map.html";
+});
+
+window.addEventListener("DOMContentLoaded", startQuiz);
+</script>
+<script src="script.js"></script>
 </body>
 </html>
