@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Index</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Quiz Site</h1>
+    <button id="navigateButton">マップを開く</button>
+  </div>
+
+  <script>
+    // ボタン押下時の動作を定義
+    const navigateButton = document.getElementById('navigateButton');
+    navigateButton.addEventListener('click', () => {
+      window.location.href = 'map.html'; // map.htmlに遷移
+    });
+  </script>
+</body>
+</html>
