@@ -2,22 +2,188 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Index</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ODQアカデミー船橋</title>
+  <style>
+    /* ルート変数（カラー設定など） */
+    :root {
+      --color-primary: #1C8CCD;   /* タイトル文字などメインアクセント */
+      --color-secondary: #F0907F; /* ボタン・カードに使用 */
+      --color-bg: #F6FAF3;        /* 背景色 */
+      --color-white: #FFFFFF;     /* 白 */
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', Arial, Helvetica, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-primary);
+    }
+
+    /* 画面全体のコンテナ */
+    .screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* スマホ全画面表示を想定 */
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+
+    /* タイトル画面 */
+    #title-screen {
+      background-color: var(--color-bg);
+    }
+
+    /* タイトルロゴ */
+    #title-logo {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    /* タイトル下のイラスト等を配置する例のコンテナ */
+    #title-visual {
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      color: #444;
+    }
+
+    /* はじめるボタン */
+    .start-button {
+      width: 220px;
+      background-color: var(--color-secondary);
+      color: var(--color-white);
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      margin: 20px;
+    }
+    .start-button:hover {
+      transform: scale(1.05);
+      background-color: #e07b6f;
+    }
+
+    /* 選択画面 */
+    #select-screen {
+      display: none; /* 最初は非表示 */
+      background-color: var(--color-bg);
+    }
+
+    /* 選択画面タイトル */
+    #select-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    /* カード一覧 */
+    .card-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 2列 */
+      gap: 20px;
+      width: 80%;
+      max-width: 400px; /* スマホ用に幅制限 */
+      margin: 0 auto;   /* 中央寄せ */
+    }
+
+    /* カード本体 */
+    .card {
+      background-color: var(--color-secondary);
+      color: var(--color-white);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* カードを本っぽく見せるためのデコレーション例 */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10px;
+      width: 5px;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.4);
+      border-radius: 2px;
+    }
+
+    /* 小さめ端末でのサイズ調整 */
+    @media (max-width: 480px) {
+      #title-logo {
+        font-size: 1.6rem;
+      }
+      .start-button {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+      }
+      #select-title {
+        font-size: 1.4rem;
+      }
+      .card {
+        padding: 0.8rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to the Quiz Site</h1>
-    <button id="navigateButton">マップを開く</button>
+
+  <!-- タイトル画面 -->
+  <div id="title-screen" class="screen">
+    <div id="title-logo">ODQアカデミー船橋</div>
+    <div id="title-visual">
+      <p>ここにイラストやアイコンなど</p>
+    </div>
+    <button class="start-button" onclick="showSelectScreen()">はじめる</button>
+    <button class="start-button" onclick="location.href='result.html'">テーマごとのぶんせき</button>
+  </div>
+
+  <!-- 選択画面 -->
+  <div id="select-screen" class="screen">
+    <div id="select-title">気になるテーマを選んでね</div>
+    <div class="card-container">
+      <div class="card" onclick="goToQuiz('map1.html')">しぜんといきもの</div>
+      <div class="card" onclick="goToQuiz('map2.html')">れきしとぶんか</div>
+      <div class="card" onclick="goToQuiz('map3.html')">おんがくとアート</div>
+      <div class="card" onclick="goToQuiz('map4.html')">スポーツとアクティビティ</div>
+    </div>
   </div>
 
   <script>
-    // ボタン押下時の動作を定義
-    const navigateButton = document.getElementById('navigateButton');
-    navigateButton.addEventListener('click', () => {
-      window.location.href = 'map.html'; // map.htmlに遷移
-    });
+    /**
+     * タイトル画面から選択画面へ切り替える関数
+     */
+    function showSelectScreen() {
+      document.getElementById("title-screen").style.display = "none";
+      document.getElementById("select-screen").style.display = "flex";
+    }
+
+    /**
+     * カードをタップした際に実行される関数
+     * 実際には別ページに遷移、または何らかのコンテンツ表示などの処理をする
+     */
+     function goToQuiz(pageUrl) {
+      window.location.href = pageUrl;
+    }
   </script>
 </body>
 </html>

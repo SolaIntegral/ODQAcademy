@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>ジャンル別正答率</title>
+  <style>
+    /* リセット */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F6FAF3;
+      color: #1C8CCD;
+      margin: 0 auto;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    /* 上2個、下2個の 2列配置 */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .genre-chart {
+      background-color: #fff;
+      border: 2px solid #1C8CCD;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .genre-chart:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .genre-chart h2 {
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+      color: #333;
+    }
+    .chart-wrap {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto;
+      position: relative;
+    }
+    /* 円グラフを実装する簡易CSS（conic-gradientをJSで動的に変更） */
+    .circle-chart {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: #ccc; /* 外周用の色(不正解部分) */
+      position: relative;
+      transform: rotate(-90deg); /* 開始地点を上にする */
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .chart-percentage {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(90deg); /* rotateを戻す */
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #1C8CCD;
+    }
+
+    /* --- イベントお知らせカード部分 --- */
+    .event-cards-container {
+      margin-top: 40px;
+    }
+    .event-cards-container h2 {
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .event-card {
+      background-color: #fff;
+      border: 2px solid #1C8CCD;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .event-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+    }
+    .event-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    .event-card p {
+      margin: 4px 0;
+      color: #666;
+    }
+    .event-card a {
+      color: #1C8CCD;
+      text-decoration: none;
+    }
+    .event-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* 戻るボタン */
+    .back-btn {
+      display: inline-block;
+      margin: 0 auto;
+      background-color: #1C8CCD;
+      color: #fff;
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s, background-color 0.3s;
+    }
+    .back-btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.1);
+    }
+    .back-btn-wrap {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ジャンル別正答率</h1>
+
+    <!-- 4つの円グラフを2x2配置する例 -->
+    <div class="chart-grid">
+      <!-- ジャンル1 -->
+      <div class="genre-chart">
+        <h2>ジャンル1</h2>
+        <div class="chart-wrap">
+          <div id="circle-chart-1" class="circle-chart">
+            <div class="chart-percentage" id="percent-text-1">0%</div>
+          </div>
+        </div>
+      </div>
+      <!-- ジャンル2 -->
+      <div class="genre-chart">
+        <h2>ジャンル2</h2>
+        <div class="chart-wrap">
+          <div id="circle-chart-2" class="circle-chart">
+            <div class="chart-percentage" id="percent-text-2">0%</div>
+          </div>
+        </div>
+      </div>
+      <!-- ジャンル3 -->
+      <div class="genre-chart">
+        <h2>ジャンル3</h2>
+        <div class="chart-wrap">
+          <div id="circle-chart-3" class="circle-chart">
+            <div class="chart-percentage" id="percent-text-3">0%</div>
+          </div>
+        </div>
+      </div>
+      <!-- ジャンル4 -->
+      <div class="genre-chart">
+        <h2>ジャンル4</h2>
+        <div class="chart-wrap">
+          <div id="circle-chart-4" class="circle-chart">
+            <div class="chart-percentage" id="percent-text-4">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- イベント情報(最も正答率が高いジャンルに応じて内容を出力) -->
+    <div class="event-cards-container">
+      <h2>おすすめイベント</h2>
+      <!-- ここにJavaScriptで作ったカードをappendする -->
+      <div id="event-cards-wrapper"></div>
+    </div>
+
+    <!-- 戻るボタン -->
+    <div class="back-btn-wrap">
+      <a class="back-btn" href="index.html">ホーム画面に戻る</a>
+    </div>
+  </div>
+
+  <!-- result.jsを読み込む -->
+  <script>
+    // result.js
+
+// ページが読み込まれたら実行
+window.addEventListener("DOMContentLoaded", () => {
+  // 1) localStorageから各ジャンルのスコアを取得
+  //    例: quiz1.htmlで setItem("genre1Correct", X), setItem("genre1Total", Y)
+  const genreScores = [1,2,3,4].map(g => {
+    const correctKey = `genre${g}Correct`;
+    const totalKey   = `genre${g}Total`;
+    const correct = parseInt(localStorage.getItem(correctKey), 10) || 0;
+    const total   = parseInt(localStorage.getItem(totalKey), 10) || 0;
+    return {
+      genre: g,
+      correct,
+      total,
+      percent: total ? Math.round((correct / total) * 100) : 0
+    };
+  });
+
+  // 2) 各ジャンルの円グラフを更新
+  genreScores.forEach(score => {
+    const chartEl = document.getElementById(`circle-chart-${score.genre}`);
+    const percentEl = document.getElementById(`percent-text-${score.genre}`);
+    if(!chartEl || !percentEl) return;
+
+    // パーセンテージ表示
+    percentEl.textContent = `${score.percent}%`;
+
+    // conic-gradient で円グラフを描画
+    // 例: correct部分が0~score.percent%、残りがscore.percent%~100%
+    const colorMain = "#4CD964"; // 正解率部分の色
+    const colorBg   = "#ccc";    // 残り(不正解率)
+    chartEl.style.background = `conic-gradient(${colorMain} 0% ${score.percent}%, ${colorBg} ${score.percent}% 100%)`;
+  });
+
+  // 3) 最も正答率が高いジャンルを決定
+  let bestGenreObj = genreScores[0];
+  for(let i = 1; i < genreScores.length; i++){
+    if(genreScores[i].percent > bestGenreObj.percent){
+      bestGenreObj = genreScores[i];
+    }
+  }
+  const bestGenre = bestGenreObj.genre;  // 1,2,3,4のいずれか
+
+  // 4) おすすめイベントを表示
+  //    (ここでは「AIから返ってきた結果」を想定したダミーデータをハードコーディング)
+  //    実際にはfetch()でサーバーから取得したり、OpenAI API呼び出しの結果を反映するなど
+  const recommendedEvents = getRecommendedEvents(bestGenre);
+
+  const eventCardsWrapper = document.getElementById("event-cards-wrapper");
+  if(recommendedEvents.length === 0) {
+    eventCardsWrapper.innerHTML = "<p>現在おすすめイベントはありません。</p>";
+  } else {
+    recommendedEvents.forEach(ev => {
+      const card = document.createElement("div");
+      card.classList.add("event-card");
+      card.innerHTML = `
+        <h3>${ev.title}</h3>
+        <p><strong>日時:</strong> ${ev.datetime}</p>
+        <p><strong>場所:</strong> ${ev.place}</p>
+        <p><strong>URL:</strong> <a href="${ev.url}" target="_blank">${ev.url}</a></p>
+      `;
+      eventCardsWrapper.appendChild(card);
+    });
+  }
+});
+
+/**
+ * ジャンルごとにAIが答えてくれるイベント情報を想定したダミーデータを返す関数
+ * @param {number} genre
+ * @returns {Array} イベントオブジェクト配列
+ */
+function getRecommendedEvents(genre) {
+  // 例: AIから「ジャンルXに興味がある子供向けのイベント」を問い合わせた結果…という想定
+  // 実際の実装ではAPI呼び出しやサーバーサイドとの通信で取得する
+  const mockEvents = {
+    1: [
+      {
+        title: "科学実験ショー in 船橋",
+        datetime: "2025年2月10日 14:00～16:00",
+        place: "船橋市民ホール",
+        url: "https://www.city.funabashi.lg.jp/example1"
+      },
+      {
+        title: "自然観察ツアー",
+        datetime: "2025年3月5日 10:00～12:00",
+        place: "アンデルセン公園",
+        url: "https://www.city.funabashi.lg.jp/example2"
+      }
+    ],
+    2: [
+      {
+        title: "歴史博物館 スタンプラリー",
+        datetime: "2025年2月20日～3月20日",
+        place: "船橋市郷土資料館",
+        url: "https://www.city.funabashi.lg.jp/example3"
+      }
+    ],
+    3: [
+      {
+        title: "音楽フェスティバル for Kids",
+        datetime: "2025年4月1日 13:00～17:00",
+        place: "船橋アリーナ",
+        url: "https://www.city.funabashi.lg.jp/example4"
+      }
+    ],
+    4: [
+      {
+        title: "船橋アートワークショップ",
+        datetime: "2025年5月3日 9:00～17:00",
+        place: "ふなばし三番瀬環境学習館",
+        url: "https://www.city.funabashi.lg.jp/example5"
+      }
+    ]
+  };
+  return mockEvents[genre] || [];
+}
+
+  </script>
+</body>
+</html>

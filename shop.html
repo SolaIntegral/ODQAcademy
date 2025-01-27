@@ -6,62 +6,106 @@
   <title>ペットショップ</title>
   <style>
     /* ショップ画面 */
-.shop-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
-}
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #F6FAF3;
+      color: #1C8CCD;
+      text-align: center;
+    }
 
-.shop-item {
-  text-align: center;
-  background-color: #fff;
-  border: 2px solid #007bff;
-  border-radius: 8px;
-  padding: 10px;
-  width: 150px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
+    h1 {
+      margin: 20px 0;
+      font-size: 2rem;
+      color: #1C8CCD;
+    }
 
-.pet-image {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 10px;
-}
+    .points-display {
+      width: 160px;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #fff;
+      border-radius: 16px;
+      padding: 12px 0px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+      font-size: 1.2rem;
+      color: #1C8CCD;
+      font-weight: bold;
+      z-index: 10;
+      text-align: center;
+    }
 
-.buy-button {
-  background-color: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 5px 10px;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
+    .shop-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
 
-.buy-button:hover {
-  background-color: #218838;
-}
+    .shop-item {
+      text-align: center;
+      background-color: #fff;
+      border: 2px solid #1C8CCD;
+      border-radius: 16px;
+      padding: 20px;
+      width: 180px;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-.map-button {
-  position: fixed;
-  top: 60px;
-  left: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  z-index: 10;
-}
+    .shop-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+    }
 
-.map-button:hover {
-  background-color: #0056b3;
-}
+    .pet-image {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 10px;
+    }
 
+    .buy-button {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .buy-button:hover {
+      background-color: #218838;
+      transform: scale(1.1);
+    }
+
+    .map-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #F0907F;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 12px 24px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, background-color 0.2s;
+      z-index: 10;
+    }
+
+    .map-button:hover {
+      background-color: #e07b6f;
+    }
   </style>
 </head>
 <body>
@@ -70,7 +114,7 @@
   <!-- ポイント表示 -->
   <div class="points-display">ポイント: <span id="points">0</span></div>
 
-  <button id="map-button" class="map-button">マップに戻る</button>
+  <button id="map-button" class="map-button">ホームにもどる</button>
 
   <!-- ペット一覧 -->
   <div class="shop-container">
@@ -94,14 +138,13 @@
   <script src="script.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-  const mapButton = document.getElementById("map-button");
-  if (mapButton) {
-    mapButton.addEventListener("click", () => {
-      window.location.href = "map.html";
+      const mapButton = document.getElementById("map-button");
+      if (mapButton) {
+        mapButton.addEventListener("click", () => {
+          window.location.href = "index.html";
+        });
+      }
     });
-  }
-});
-
   </script>
 </body>
 </html>

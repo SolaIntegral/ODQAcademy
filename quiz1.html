@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ジャンル2クイズ</title>
+  <title>ジャンル1クイズ</title>
   <style>
     /* リセット */
     * {
@@ -207,7 +207,7 @@
 
     <!-- ジャンル名・コメント -->
     <div class="top-info">
-      <h2>ジャンル2</h2>
+      <h2>ジャンル1</h2>
       <p>がんばれ！</p>
     </div>
 
@@ -262,22 +262,22 @@
      * 実際には50問程度を用意し、必要に応じて拡張
      **************************************************/
     const allQuizData = [
-    { genre: 2, question: "ふなばしでれきしをまなべるばしょはどこ？", choices: ["きょうどしりょうかん", "アンデルセンこうえん", "さんばんせ", "ふなばしアリーナ"], correctIndex: 0 },
-    { genre: 2, question: "ふなばしにあるれきしのたてものは？", choices: ["おてら", "じんじゃ", "きゅうせいかん", "ぜんぶ"], correctIndex: 3 },
-    { genre: 2, question: "ふなばしのおまつりでゆうめいなのは？", choices: ["ふなばししおさいまつり", "れきしまつり", "おんがくまつり", "しぜんまつり"], correctIndex: 0 },
-    { genre: 2, question: "ふなばしでおおきなれきしのイベントがおこなわれるばしょは？", choices: ["きょうどしりょうかん", "さんばんせ", "ふなばしアリーナ", "こうえん"], correctIndex: 0 },
-    { genre: 2, question: "ふなばしにあるじんじゃのなまえは？", choices: ["ならおじんじゃ", "ふなばしまつりじんじゃ", "いなりじんじゃ", "おおみやじんじゃ"], correctIndex: 3 },
-    { genre: 2, question: "ふなばしでれきしをまなべるイベントは？", choices: ["スタンプラリー", "れきしてんじ", "おおきなれきしツアー", "ぜんぶ"], correctIndex: 3 },
-    { genre: 2, question: "ふなばしでれきしのはなしをきけるイベントは？", choices: ["ふなばしおはなしツアー", "おまつり", "れきしのひ", "きょうどしりょうかんのこうざ"], correctIndex: 3 },
-    { genre: 2, question: "ふなばしのおまつりでおどりがみられるのは？", choices: ["しおさいまつり", "おんがくフェス", "ふなばしれきしイベント", "なしやままつり"], correctIndex: 0 },
-    { genre: 2, question: "れきしイベントでたいせつなのは？", choices: ["ききながらメモをとる", "たくさんたべる", "おおきなこえでしゃべる", "とくになし"], correctIndex: 0 },
-    { genre: 2, question: "ふなばしのおみやげにかんけいするれきしのイベントは？", choices: ["れきしのひ", "おみやげツアー", "しおさいまつり", "きょうどてんじ"], correctIndex: 3 },
-    { genre: 2, question: "ふなばしにちなんだものは？", choices: ["ふなばしふぐ", "ふなばしせんべい", "ふなばしだんご", "ふなばしまるもち"], correctIndex: 1 },
-
-    ];
+    { genre: 1, question: "ふなばしでとりをかんさつできるばしょはどこ？", choices: ["さんばんせ", "アンデルセンこうえん", "えどがわ", "ふなばしアリーナ"], correctIndex: 0 },
+    { genre: 1, question: "ふなばしさんばんせでとくにおおいとりは？", choices: ["かも", "さぎ", "わし", "からす"], correctIndex: 1 },
+    { genre: 1, question: "ふなばしでみられるうみのいきものは？", choices: ["くらげ", "たこ", "さかな", "ぜんぶ"], correctIndex: 3 },
+    { genre: 1, question: "しおひがりができるばしょはどこ？", choices: ["アンデルセンこうえん", "さんばんせ", "ふなばしきたこうえん", "なしやま"], correctIndex: 1 },
+    { genre: 1, question: "しぜんかんさつのときにつかうどうぐは？", choices: ["つりざお", "ぼうえんきょう", "えほん", "ふで"], correctIndex: 1 },
+    { genre: 1, question: "ふなばしアンデルセンこうえんでみられるいきものは？", choices: ["かえる", "とり", "むし", "ぜんぶ"], correctIndex: 3 },
+    { genre: 1, question: "ふなばしでさくらがきれいにさくこうえんは？", choices: ["さんばんせ", "ふなばしきたこうえん", "アンデルセンこうえん", "ぜんぶ"], correctIndex: 2 },
+    { genre: 1, question: "さんばんせではどんなイベントがおこなわれる？", choices: ["とりかんさつ", "ゴミひろい", "しおひがり", "ぜんぶ"], correctIndex: 3 },
+    { genre: 1, question: "しぜんかんさつでたいせつなことは？", choices: ["いきものにさわらない", "ゴミをすてない", "しずかにする", "ぜんぶ"], correctIndex: 3 },
+    { genre: 1, question: "ふなばしでつりができるばしょはどこ？", choices: ["さんばんせ", "アンデルセンこうえん", "ふなばしアリーナ", "こうえん"], correctIndex: 0 },
+    { genre: 1, question: "しぜんかんさつイベントのあと、なにをする？", choices: ["レポートをかく", "おやつをたべる", "きょうりょくしてゴミをひろう", "かえってねる"], correctIndex: 2 },
+    { genre: 1, question: "ふなばしでたくさんのかもがみられるきせつは？", choices: ["はる", "なつ", "あき", "ふゆ"], correctIndex: 3 },
+      ];
 
     // 今回はジャンル1から5問ランダムに選ぶ
-    const GENRE = 2;
+    const GENRE = 1;
     const TOTAL_QUESTIONS = 5; // カード枚数＝出題数
 
     // DOM要素取得
@@ -296,7 +296,7 @@
     let selectedQuestions = [];       // ジャンル1から5問抽出した配列
     let userAnswers = [];             // { question, choices, correctIndex, userIndex }の配列
     let answeredCount = 0;            // 何問回答済みか
-    let genreScores = { 2: { correct: 0, total: 0 } }; // ジャンルごとのスコア保持サンプル
+    let genreScores = { 1: { correct: 0, total: 0 } }; // ジャンルごとのスコア保持サンプル
 
     /**************************************************
      * 初期化処理
@@ -445,8 +445,8 @@
         `;
       }).join("");
             // localStorageにジャンル1のスコアを保存
-            localStorage.setItem('genre2Correct', correctCount);
-      localStorage.setItem('genre2Total', totalCount);
+            localStorage.setItem('genre1Correct', correctCount);
+      localStorage.setItem('genre1Total', totalCount);
     }
 
     /**************************************************
@@ -476,7 +476,7 @@
      **************************************************/
     // マップに戻るボタン
     backToMapBtn.addEventListener("click", () => {
-      window.location.href = "map2.html";
+      window.location.href = "map1.html";
     });
 
     // ページ読み込み時にクイズ初期化

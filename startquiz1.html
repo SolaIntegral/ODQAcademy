@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>クイズを始めるよ！</title>
+  <style>
+    body {
+      margin: 0; 
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #F6FAF3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* 画面全体に中央配置 */
+    }
+    
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #1C8CCD;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    .quiz-button {
+      width: 160px;
+      font-size: 1.2rem;
+      margin: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 16px;
+      background: #1C8CCD;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .quiz-button:hover {
+      background: #0056b3;
+      transform: scale(1.1);
+    }
+
+    .wait-button {
+      width: 160px;
+      font-size: 1.2rem;
+      margin: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 16px;
+      background: #c0c0c0;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .wait-button:hover {
+      background: #a0a0a0;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>しぜんといきもの</h1>
+  <h1>クイズをはじめるよ！</h1>
+  <p>じゅんびはいい？</p>
+  <button class="quiz-button" onclick="location.href='quiz1.html'">いいよ！</button>
+  <button class="wait-button" onclick="history.back()">ちょっとまって</button>
+</body>
+</html>
